@@ -31,7 +31,7 @@ docker-compose up -d
     host: 127.0.0.100
     port: 3305
 
-## Структура Docker'а 
+## Структура проекта 
 ```
 Docker:
     > images
