@@ -28,10 +28,10 @@ services:
   mysql:
     image: mysql:8
     ports:
-      - "127.0.0.100:3305:3306"
+      - "127.0.0.1:3306:3306"
     volumes:
       - ./mysql:/var/lib/mysql
     # задаем пароль для root пользователя
     environment:
-      MYSQL_DATABASE: korova
+      MYSQL_DATABASE: katalog
       MYSQL_ROOT_PASSWORD: root
