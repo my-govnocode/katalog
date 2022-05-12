@@ -79,10 +79,18 @@ use yii\helpers\Html;
                         <div class="element-title">
                             <a href=""><?= $product->name ?></a>
                         </div>
+
                         <div class="element-price"><?= $product->price ?> ₽</div><br>
+
+
+                        <?= Html::beginForm(['product/update', 'id' => $product->id], 'PATCH'); ?>
+                            <?= Html::submitButton('Обновить', ['class' => 'btn']); ?>
+                        <?= Html::endForm(); ?><br>
+
                         <?= Html::beginForm(['product/delete', 'id' => $product->id], 'delete'); ?>
                             <?= Html::submitButton('Удалить', ['class' => 'btn']); ?>
                         <?= Html::endForm(); ?>
+
                     </div>
                 </div>   
                 <?php endforeach; ?>

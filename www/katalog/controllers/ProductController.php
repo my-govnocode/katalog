@@ -91,6 +91,17 @@ class ProductController extends \yii\web\Controller
         }
     }
 
+    public function actionUpdate($id)
+    {
+        $model = Product::find($id)->with('propertys')->one();
+        $groups = GroupProperty::find()->with('propertys')->all();
+
+        return $this->render('update', [
+            'model' => $model,
+            'groups' => $groups
+        ]);
+    }
+
     public function actionDelete($id)
     {
         $model = Product::findOne($id);
