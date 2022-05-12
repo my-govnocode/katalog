@@ -16,7 +16,7 @@ use yii\helpers\Url;
                             <ul class="filter-list">
                                 <?php foreach($group->propertys as $property): ?>
                                     <li>
-                                        <input name="<?= $group->url ?>" value="<?= $property->url ?>" type="checkbox" id="filter-size-1">
+                                        <input name="<?= $group->code ?>" value="<?= $property->code ?>" type="checkbox" id="filter-size-1">
                                         <label for="filter-size-1"><?= $property->name ?></label>
                                     </li>
                                 <?php endforeach; ?>

@@ -3,9 +3,7 @@
 namespace app\models;
 
 use yii\base\Model;
-use yii\web\UploadedFile;
 use yii\helpers\FileHelper;
-
 class CreateProductForm extends Model
 {
     public $image;
@@ -23,8 +21,10 @@ class CreateProductForm extends Model
         ];
     }
     
-    public function upload($path)
+    public function upload()
     {
+        $path = Product::IMAGE_PATH . $this->id;
+        FileHelper::createDirectory($path);
         if ($this->image != null) {
             $fileName = $this->image->name;
             $this->image->saveAs($path . '/' . $fileName);

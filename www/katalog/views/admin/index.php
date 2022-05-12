@@ -20,7 +20,7 @@ use yii\helpers\Html;
                                 <ul class="filter-list">
                                     <?php foreach($group->propertys as $property): ?>
                                         <li>
-                                            <input name="<?= $group->url ?>" value="<?= $property->url ?>" type="checkbox" id="filter-size-1">
+                                            <input name="<?= $group->code ?>" value="<?= $property->code ?>" type="checkbox" id="filter-size-1">
                                             <label for="filter-size-1"><?= $property->name ?></label>
                                         </li>
                                     <?php endforeach; ?>
@@ -79,10 +79,18 @@ use yii\helpers\Html;
                         <div class="element-title">
                             <a href=""><?= $product->name ?></a>
                         </div>
+
                         <div class="element-price"><?= $product->price ?> ₽</div><br>
+
+
+                        <?= Html::beginForm(['product/update', 'id' => $product->id], 'PATCH'); ?>
+                            <?= Html::submitButton('Обновить', ['class' => 'btn']); ?>
+                        <?= Html::endForm(); ?><br>
+
                         <?= Html::beginForm(['product/delete', 'id' => $product->id], 'delete'); ?>
                             <?= Html::submitButton('Удалить', ['class' => 'btn']); ?>
                         <?= Html::endForm(); ?>
+
                     </div>
                 </div>   
                 <?php endforeach; ?>

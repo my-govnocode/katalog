@@ -2,7 +2,7 @@
 
 namespace app\models;
 
-use Yii;
+use yii\helpers\FileHelper;
 
 /**
  * This is the model class for table "products".
@@ -14,6 +14,10 @@ use Yii;
  */
 class Product extends \yii\db\ActiveRecord
 {
+    const IMAGE_PATH = 'image/products/';
+
+    public $imageFile;
+
     /**
      * {@inheritdoc}
      */
@@ -55,11 +59,10 @@ class Product extends \yii\db\ActiveRecord
 
     public function upload()
     {
-        if ($this->validate()) {
-            $this->image->saveAs('/image/products/' . $this->imageFile->baseName . '.' . $this->imageFile->extension);
-            return true;
-        } else {
-            return false;
-        }
+        $path = self::IMAGE_PATH . $this->id;
+        FileHelper::createDirectory($path);
+        $fileName = $this->imageFile->name;
+        $this->imageFile->saveAs($path . '/' . $fileName);
+        return $fileName;
     }
 }
