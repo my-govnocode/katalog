@@ -15,29 +15,27 @@ class m220511_110256_create_property_product_table extends Migration
         $this->createTable('{{%property_product}}', [
             'id' => $this->primaryKey(),
             'property_id' => $this->integer(),
-            'product_id' => $this->integer()
+            'product_id' => $this->integer(),
+            'group_id' => $this->integer()
         ]);
+
 
         $this->createIndex(
             'idx-property_product-property_id',
             'property_product',
-            'property_id'
+            ['property_id', 'product_id'],
+            true
         );
 
         $this->addForeignKey(
             'fk-property_product-property_id',
             'property_product',
             'property_id',
-            'propertys',
+            'properties',
             'id',
             'CASCADE'
         );
 
-        $this->createIndex(
-            'idx-property_product-product_id',
-            'property_product',
-            'product_id'
-        );
 
         $this->addForeignKey(
             'fk-property_product-product_id',

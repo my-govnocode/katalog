@@ -9,7 +9,7 @@ class CreateProductForm extends Model
     public $image;
     public $name;
     public $price;
-    public $propertys;
+    public $properties;
 
     public function rules()
     {
@@ -19,25 +19,5 @@ class CreateProductForm extends Model
             [['name'], 'string', 'max' => 255],
             
         ];
-    }
-    
-    public function upload()
-    {
-        $path = Product::IMAGE_PATH . $this->id;
-        FileHelper::createDirectory($path);
-        if ($this->image != null) {
-            $fileName = $this->image->name;
-            $this->image->saveAs($path . '/' . $fileName);
-            return $fileName;
-        }
-    }
-
-    public function sync($p)
-    {
-        $value = [];
-        var_dump($this->propertysArr);
-        foreach ($this->propertys as $property) {
-            $value[] = [];
-        }
     }
 }

@@ -51,12 +51,6 @@ class Product extends \yii\db\ActiveRecord
         ];
     }
 
-    public function getPropertys()
-    {
-        return $this->hasMany(Property::class, ['id' => 'property_id'])
-            ->viaTable('property_product', ['product_id' => 'id']);
-    }
-
     public function upload()
     {
         $path = self::IMAGE_PATH . $this->id;
@@ -64,5 +58,17 @@ class Product extends \yii\db\ActiveRecord
         $fileName = $this->imageFile->name;
         $this->imageFile->saveAs($path . '/' . $fileName);
         return $fileName;
+    }
+
+    public function getProperties()
+    {
+        return $this->hasMany(Property::class, ['id' => 'property_id'])
+            ->viaTable('property_product', ['product_id' => 'id']);
+    }
+
+    public function getGroups()
+    {
+        return $this->hasMany(GroupProperty::class, ['id' => 'group_id'])
+            ->via('properties');
     }
 }
