@@ -9,7 +9,7 @@ use Yii;
  *
  * @property int $id
  * @property string $name
- * @property string|null $photo
+ * @property  $image
  * @property float $price
  */
 class Product extends \yii\db\ActiveRecord
@@ -29,7 +29,6 @@ class Product extends \yii\db\ActiveRecord
     {
         return [
             [['name', 'price'], 'required'],
-            [['photo'], 'string'],
             [['price'], 'number'],
             [['name'], 'string', 'max' => 255],
         ];
@@ -52,5 +51,15 @@ class Product extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Property::class, ['id' => 'property_id'])
             ->viaTable('property_product', ['product_id' => 'id']);
+    }
+
+    public function upload()
+    {
+        if ($this->validate()) {
+            $this->image->saveAs('/image/products/' . $this->imageFile->baseName . '.' . $this->imageFile->extension);
+            return true;
+        } else {
+            return false;
+        }
     }
 }

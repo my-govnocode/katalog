@@ -31,8 +31,8 @@ class PropertyProduct extends \yii\db\ActiveRecord
     {
         return [
             [['property_id', 'product_id'], 'integer'],
-            [['property_id'], 'exist', 'skipOnError' => true, 'targetClass' => Propertys::className(), 'targetAttribute' => ['property_id' => 'id']],
-            [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Products::className(), 'targetAttribute' => ['product_id' => 'id']],
+            [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Product::className(), 'targetAttribute' => ['product_id' => 'id']],
+            [['property_id'], 'exist', 'skipOnError' => true, 'targetClass' => Property::className(), 'targetAttribute' => ['property_id' => 'id']],
         ];
     }
 
@@ -55,7 +55,7 @@ class PropertyProduct extends \yii\db\ActiveRecord
      */
     public function getProduct()
     {
-        return $this->hasOne(Products::className(), ['id' => 'product_id']);
+        return $this->hasOne(Product::className(), ['id' => 'product_id']);
     }
 
     /**
@@ -65,6 +65,6 @@ class PropertyProduct extends \yii\db\ActiveRecord
      */
     public function getProperty()
     {
-        return $this->hasOne(Propertys::className(), ['id' => 'property_id']);
+        return $this->hasOne(Property::className(), ['id' => 'property_id']);
     }
 }

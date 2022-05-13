@@ -46,18 +46,14 @@ class Property extends \yii\db\ActiveRecord
         ];
     }
 
-    /**
-     * Gets query for [[PropertyProducts]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getPropertyProducts()
-    {
-        return $this->hasMany(PropertyProduct::className(), ['property_id' => 'id']);
-    }
-
     public function getGroup()
     {
         return $this->hasOne(GroupProperty::class, ['id' => 'group_id']);
+    }
+
+    public function getProducts()
+    {
+        return $this->hasMany(Product::class, ['id' => 'product_id'])
+            ->viaTable('property_product', ['property_id' => 'id']);
     }
 }
