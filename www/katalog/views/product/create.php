@@ -28,10 +28,10 @@ use yii\widgets\ActiveForm;
 
                 <?php foreach($groups as $group) {
                     $validProperty = [];
-                    foreach ($group->propertys as $property) {
+                    foreach ($group->properties as $property) {
                         $validProperty[$property->id] = $property->name;
                     }
-                    echo $form->field($model, 'propertys[]')->dropDownList($validProperty, ['prompt' => '--'])->label($group->name);
+                    echo $form->field($model, 'properties[]')->dropDownList($validProperty, ['prompt' => '--'])->label($group->name);
                 }?>
                 <br>
 

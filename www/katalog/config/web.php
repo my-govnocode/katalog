@@ -48,12 +48,12 @@ $config = [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
-                'admin/products' => 'admin/index',
-                'GET products' => 'product/index',
-                'GET products/create' => 'product/create',
-                'POST products' => 'product/create',
-                'PUT,PATCH products/<id>' => 'product/update',
-                'DELETE products/<id>' => 'product/delete',
+                'GET admin/catalog' => 'admin/index',
+                'GET catalog' => 'product/index',
+                'GET catalog/create' => 'product/create',
+                'POST catalog' => 'product/create',
+                'PUT,PATCH catalog/<id>' => 'product/update',
+                'DELETE catalog/<id>' => 'product/delete',
             ],
         ],
         

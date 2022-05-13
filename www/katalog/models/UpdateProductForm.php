@@ -11,7 +11,7 @@ class UpdateProductForm extends Model
     public $image;
     public $name;
     public $price;
-    public $propertys;
+    public $properties;
 
     public function rules()
     {
@@ -21,14 +21,5 @@ class UpdateProductForm extends Model
             [['name'], 'string', 'max' => 255],
             
         ];
-    }
-    
-    public function upload($path)
-    {
-        if ($this->image != null) {
-            $fileName = $this->image->name;
-            $this->image->saveAs($path . '/' . $fileName);
-            return $fileName;
-        }
     }
 }

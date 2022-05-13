@@ -28,7 +28,7 @@ class m220511_110256_create_property_product_table extends Migration
             'fk-property_product-property_id',
             'property_product',
             'property_id',
-            'propertys',
+            'properties',
             'id',
             'CASCADE'
         );

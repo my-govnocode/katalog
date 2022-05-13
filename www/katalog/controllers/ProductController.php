@@ -20,15 +20,35 @@ class ProductController extends \yii\web\Controller
     {
         $data = \Yii::$app->request->get();
         if ($data) {
-            $groups = GroupProperty::find()->with('propertys')->all();
-            $products = Product::find()->joinWith('propertys')->where(['code' => array_values($data)])->all();
+        //var_dump($data);
+        $priceFrom = ArrayHelper::remove($data, 'priceFrom');
+        $priceTo = ArrayHelper::remove($data, 'priceTo');
+            $groups = GroupProperty::find()->with('properties')->all();
+            $products = Product::find()->joinWith('properties');
+            //$products = Product::find()->joinWith('groups')->where(['group_propertys.code' => ['razmer', 'tkan']])->andWhere(['properties.code' => [ 'small', 'big']]);
+
+            $arr = [];
+            foreach ($data as $prop) {
+                foreach ($prop as $p) {
+                    $arr[] = $p;
+                }
+            }
+
+            foreach ($data as $key => $prop) {
+                $products->innerJoin('group_propertys group' . $key, 'properties.group_id = group' . $key . '.id')->where(['group' . $key . '.code' => $key])->andWhere(['in', 'properties.code', $arr]);
+            }
+
+            $products = $products->andWhere(['between', 'price', $priceFrom, $priceTo])->groupBy('products.id')->all();
+            //$products = $products->createCommand()->getRawSql();
+
+            //var_dump($products);
     
             return $this->render('index', [
                 'products' => $products,
                 'groups' => $groups
             ]);
         } else {
-            $groups = GroupProperty::find()->with('propertys')->all();
+            $groups = GroupProperty::find()->with('properties')->all();
             $products = Product::find()->all();
     
             return $this->render('index', [
@@ -40,7 +60,7 @@ class ProductController extends \yii\web\Controller
 
     public function actionCreate()
     {
-        $groups = GroupProperty::find()->with('propertys')->all();
+        $groups = GroupProperty::find()->with('properties')->all();
         $property_product = new PropertyProduct();
         $model = new Product();
         $form = new CreateProductForm();
@@ -52,12 +72,12 @@ class ProductController extends \yii\web\Controller
             $model->name = $form->name;
             $model->price = $form->price;
 
-            $value = [];
-            foreach ($data['CreateProductForm']['propertys'] as $property) {
-                $value[] = [$property, $model->id];
-            }
-            \Yii::$app->db->createCommand()->batchInsert('property_product', ['property_id', 'product_id'], $value)->execute();
                 if ($model->save()) {
+                    $value = [];
+                    foreach ($data['CreateProductForm']['properties'] as $property) {
+                        $value[] = [$property, $model->id];
+                    }
+                    \Yii::$app->db->createCommand()->batchInsert('property_product', ['property_id', 'product_id'], $value)->execute();
                     if ($model->imageFile !== null) {
                         if ($model->image = $model->upload()) {
                             if ($model->save()){
@@ -79,13 +99,13 @@ class ProductController extends \yii\web\Controller
     public function actionUpdate($id)
     {
         $model = new UpdateProductForm();
-        $product = Product::find()->with('propertys')->where(['id' => $id])->one();
-        $groups = GroupProperty::find()->with('propertys')->all();
+        $product = Product::find()->with('properties')->where(['id' => $id])->one();
+        $groups = GroupProperty::find()->with('properties')->all();
         $product->imageFile = UploadedFile::getInstance($model, 'image');
 
-        $propertysSelected = [];
-        foreach ($product->propertys as $property) {
-            $propertysSelected[$property->id] = ['selected' => true];
+        $propertiesSelected = [];
+        foreach ($product->properties as $property) {
+            $propertiesSelected[$property->id] = ['selected' => true];
         }
 
         $data = \Yii::$app->request->post();
@@ -95,7 +115,7 @@ class ProductController extends \yii\web\Controller
             PropertyProduct::deleteAll(['product_id' => $product->id]);
 
             $value = [];
-            foreach ($data['UpdateProductForm']['propertys'] as $property) {
+            foreach ($data['UpdateProductForm']['properties'] as $property) {
                 $value[] = [$property, $product->id];
             }
             \Yii::$app->db->createCommand()->batchInsert('property_product', ['property_id', 'product_id'], $value)->execute();
@@ -118,7 +138,7 @@ class ProductController extends \yii\web\Controller
             'model' => $model,
             'product' => $product,
             'groups' => $groups,
-            'propertysSelected' => $propertysSelected
+            'propertiesSelected' => $propertiesSelected
         ]);
     }
 

@@ -39,7 +39,7 @@ class GroupProperty extends \yii\db\ActiveRecord
         ];
     }
 
-    public function getPropertys()
+    public function getProperties()
     {
         return $this->hasMany(Property::class, ['group_id' => 'id']);
     }
