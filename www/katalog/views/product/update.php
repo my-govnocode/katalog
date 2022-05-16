@@ -10,18 +10,18 @@ use yii\widgets\ActiveForm;
     <div class="row">
         <div class="col-md-4">
             <?php $form = ActiveForm::begin([
-                'action' => '/products',
-                'method' => 'post',
+                'action' => Url::toRoute(['product/update', 'id' => $product->id]),
+                'method' => 'put',
                 'options' => ['enctype' => 'multipart/form-data']
             ]); ?>
 
                 <div class="form-group">
-                    <?= $form->field($model, 'name')->textInput()->label('Название'); ?>
+                    <?= $form->field($model, 'name')->textInput(['value' => $product->name])->label('Название'); ?>
                 </div>
                 <br>
 
                 <div class="form-group">
-                    <?= $form->field($model, 'price')->label('Цена'); ?>
+                    <?= $form->field($model, 'price')->textInput(['value' => $product->price])->label('Цена'); ?>
                 </div>
                 <br>
 
@@ -30,11 +30,11 @@ use yii\widgets\ActiveForm;
                     <h4><?= $group->name; ?></h3>
                     <?php
                     $validProperty = [];
-                    foreach ($group->propertys as $property) {
-                        $validProperty[(int)$property->id] = $property->name;
+                    foreach ($group->properties as $property) {
+                        $validProperty[$property->id] = $property->name;
                     }
                      ?>
-                    <?= $form->field($model, 'propertys[]')->dropDownList($validProperty); ?>
+                    <?= $form->field($model, 'properties[]')->dropDownList($validProperty, ['options' => $propertiesSelected, 'prompt' => '--']); ?>
                 <?php endforeach; ?>
                 <br>
 

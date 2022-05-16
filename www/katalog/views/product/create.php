@@ -10,7 +10,7 @@ use yii\widgets\ActiveForm;
     <div class="row">
         <div class="col-md-4">
             <?php $form = ActiveForm::begin([
-                'action' => '/products',
+                'action' => Url::toRoute(['product/index']),
                 'method' => 'post',
                 'options' => ['enctype' => 'multipart/form-data']
             ]); ?>
@@ -26,16 +26,13 @@ use yii\widgets\ActiveForm;
                 <br>
 
 
-                <?php foreach($groups as $group): ?>
-                    <h4><?= $group->name; ?></h3>
-                    <?php
+                <?php foreach($groups as $group) {
                     $validProperty = [];
-                    foreach ($group->propertys as $property) {
-                        $validProperty[(int)$property->id] = $property->name;
+                    foreach ($group->properties as $property) {
+                        $validProperty[$property->id] = $property->name;
                     }
-                     ?>
-                    <?= $form->field($model, 'propertys[]')->dropDownList($validProperty); ?>
-                <?php endforeach; ?>
+                    echo $form->field($model, 'properties[]')->dropDownList($validProperty, ['prompt' => '--'])->label($group->name);
+                }?>
                 <br>
 
                 <div class="form-group">

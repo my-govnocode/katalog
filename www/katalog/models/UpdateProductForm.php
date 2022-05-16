@@ -3,8 +3,10 @@
 namespace app\models;
 
 use yii\base\Model;
+use yii\web\UploadedFile;
 use yii\helpers\FileHelper;
-class CreateProductForm extends Model
+
+class UpdateProductForm extends Model
 {
     public $image;
     public $name;

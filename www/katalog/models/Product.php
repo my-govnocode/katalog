@@ -2,7 +2,7 @@
 
 namespace app\models;
 
-use Yii;
+use yii\helpers\FileHelper;
 
 /**
  * This is the model class for table "products".
@@ -14,6 +14,10 @@ use Yii;
  */
 class Product extends \yii\db\ActiveRecord
 {
+    const IMAGE_PATH = 'image/products/';
+
+    public $imageFile;
+
     /**
      * {@inheritdoc}
      */
@@ -47,19 +51,24 @@ class Product extends \yii\db\ActiveRecord
         ];
     }
 
-    public function getPropertys()
+    public function upload()
+    {
+        $path = self::IMAGE_PATH . $this->id;
+        FileHelper::createDirectory($path);
+        $fileName = $this->imageFile->name;
+        $this->imageFile->saveAs($path . '/' . $fileName);
+        return $fileName;
+    }
+
+    public function getProperties()
     {
         return $this->hasMany(Property::class, ['id' => 'property_id'])
             ->viaTable('property_product', ['product_id' => 'id']);
     }
 
-    public function upload()
+    public function getGroups()
     {
-        if ($this->validate()) {
-            $this->image->saveAs('/image/products/' . $this->imageFile->baseName . '.' . $this->imageFile->extension);
-            return true;
-        } else {
-            return false;
-        }
+        return $this->hasMany(GroupProperty::class, ['id' => 'group_id'])
+            ->via('properties');
     }
 }

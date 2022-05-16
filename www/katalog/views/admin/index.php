@@ -9,7 +9,7 @@ use yii\helpers\Html;
     <h2><a href="<?= Url::toRoute('product/create'); ?>">Добавить продукт</a></h2>
     <div class="columns">
         <div class="column col-3">
-        <form action="<?= Url::to('products'); ?>" method='get'>
+        <form action="<?= Url::toRoute('admin/index'); ?>" method='get'>
             <!-- filter -->
             <div class="filter">
                     <?php foreach($groups as $group): ?>
@@ -18,10 +18,10 @@ use yii\helpers\Html;
                             <div class="filter-title"><?= $group->name ?></div>
                             <div class="filter-content">
                                 <ul class="filter-list">
-                                    <?php foreach($group->propertys as $property): ?>
+                                    <?php foreach($group->properties as $property): ?>
                                         <li>
-                                            <input name="<?= $group->url ?>" value="<?= $property->url ?>" type="checkbox" id="filter-size-1">
-                                            <label for="filter-size-1"><?= $property->name ?></label>
+                                            <input name="<?= Html::encode($group->code); ?>[]" value="<?= Html::encode($property->code); ?>" type="checkbox" id="filter-size-1">
+                                            <label for="filter-size-1"><?= Html::encode($property->name); ?></label>
                                         </li>
                                     <?php endforeach; ?>
                                 </ul>
@@ -33,9 +33,9 @@ use yii\helpers\Html;
                         <div class="filter-title">Цена</div>
                         <div class="filter-content">
                             <div class="price">
-                                <input type="text" class="price-input ui-slider-min" value="0">
+                                <input name="priceFrom" type="number" class="price-input ui-slider-min" value="0">
                                 <span class="price-sep"></span>
-                                <input type="text" class="price-input ui-slider-max" value="2000">
+                                <input name="priceTo" type="number" class="price-input ui-slider-max" value="2000">
                             </div>
                             <div class="ui-slider"></div>
                             <script>
@@ -77,11 +77,10 @@ use yii\helpers\Html;
                         <img src="<?= file_exists('image/products/' . $product->id . '/' . $product->image) && $product->image !== null ? 'image/products/' . $product->id . '/' . $product->image : 'https://avatars.mds.yandex.net/get-mpic/1923922/img_id3485673576547289781.jpeg/6hq' ?>" alt="">
                         </div>
                         <div class="element-title">
-                            <a href=""><?= $product->name ?></a>
+                            <a href=""><?= Html::encode($product->name); ?></a>
                         </div>
 
-                        <div class="element-price"><?= $product->price ?> ₽</div><br>
-
+                        <div class="element-price"><?= Html::encode($product->price); ?> ₽</div><br>
 
                         <?= Html::beginForm(['product/update', 'id' => $product->id], 'PATCH'); ?>
                             <?= Html::submitButton('Обновить', ['class' => 'btn']); ?>

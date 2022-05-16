@@ -15,7 +15,7 @@ class m220511_105249_create_group_propertys_table extends Migration
         $this->createTable('{{%group_propertys}}', [
             'id' => $this->primaryKey(),
             'name' => $this->string(),
-            'url' => $this->string(),
+            'code' => $this->string()->unique(),
         ]);
     }
 
