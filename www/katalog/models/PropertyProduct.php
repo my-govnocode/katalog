@@ -10,12 +10,15 @@ use Yii;
  * @property int $id
  * @property int|null $property_id
  * @property int|null $product_id
+ * @property int|null $group_id
  *
  * @property Products $product
  * @property Propertys $property
  */
 class PropertyProduct extends \yii\db\ActiveRecord
 {
+    public $group_id;
+    
     /**
      * {@inheritdoc}
      */
@@ -31,8 +34,8 @@ class PropertyProduct extends \yii\db\ActiveRecord
     {
         return [
             [['property_id', 'product_id'], 'integer'],
-            [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Product::className(), 'targetAttribute' => ['product_id' => 'id']],
-            [['property_id'], 'exist', 'skipOnError' => true, 'targetClass' => Property::className(), 'targetAttribute' => ['property_id' => 'id']],
+            [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Product::class, 'targetAttribute' => ['product_id' => 'id']],
+            [['property_id'], 'exist', 'skipOnError' => true, 'targetClass' => Property::class, 'targetAttribute' => ['property_id' => 'id']],
         ];
     }
 
@@ -45,26 +48,7 @@ class PropertyProduct extends \yii\db\ActiveRecord
             'id' => 'ID',
             'property_id' => 'Property ID',
             'product_id' => 'Product ID',
+            'group_id' => 'Group Id'
         ];
-    }
-
-    /**
-     * Gets query for [[Product]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getProduct()
-    {
-        return $this->hasOne(Product::className(), ['id' => 'product_id']);
-    }
-
-    /**
-     * Gets query for [[Property]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getProperty()
-    {
-        return $this->hasOne(Property::className(), ['id' => 'property_id']);
     }
 }

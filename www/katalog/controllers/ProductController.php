@@ -12,6 +12,7 @@ use app\models\UpdateProductForm;
 use yii\helpers\ArrayHelper;
 use yii\web\UploadedFile;
 use yii\helpers\FileHelper;
+use Yii;
 
 class ProductController extends \yii\web\Controller
 {
@@ -19,12 +20,14 @@ class ProductController extends \yii\web\Controller
 
     public function actionIndex()
     {
+        $session = \Yii::$app->session;
+        $products = Product::find();
         $data = \Yii::$app->request->get();
-        if ($data) {
-        $priceFrom = ArrayHelper::remove($data, 'priceFrom');
-        $priceTo = ArrayHelper::remove($data, 'priceTo');
-            $groups = GroupProperty::find()->with('properties')->all();
-            $products = Product::find()->andWhere(['between', 'price', $priceFrom, $priceTo]);
+
+        if(Yii::$app->request->isAjax) {
+            $priceFrom = ArrayHelper::remove($data, 'priceFrom');
+            $priceTo = ArrayHelper::remove($data, 'priceTo');
+            $products->andWhere(['between', 'price', $priceFrom, $priceTo]);
 
             foreach ($data as $key => $prop) {
                 $propId = Property::find()->select('id')->where(['code' => $prop])->asArray()->all();
@@ -36,71 +39,68 @@ class ProductController extends \yii\web\Controller
             }
 
             $products = $products->groupBy('products.id')->all();
-    
-            return $this->render('index', [
+
+            return $this->renderAjax('products', [
                 'products' => $products,
-                'groups' => $groups
-            ]);
-        } else {
-            $groups = GroupProperty::find()->with('properties')->all();
-            $products = Product::find()->all();
-    
-            return $this->render('index', [
-                'products' => $products,
-                'groups' => $groups
             ]);
         }
+        $products = $products->all();
+        return $this->render('index', [
+            'products' => $products,
+            'session' => $session
+        ]);
     }
 
     public function actionCreate()
     {
+        $session = \Yii::$app->session;
         $groups = GroupProperty::find()->with('properties')->all();
-        $property_product = new PropertyProduct();
-        $model = new Product();
+        $product = new Product();
         $form = new CreateProductForm();
         $data = \Yii::$app->request->post();
 
         if ($form->load($data) && $form->validate()) {
-            
-            $model->imageFile = UploadedFile::getInstance($form, 'image');
-            $model->name = $form->name;
-            $model->price = $form->price;
-
-                if ($model->save()) {
-                    $validProp = [];
-                    foreach ($data['CreateProductForm']['properties'] as $prop) {
-                        $validProp[] = (int)$prop;
-                    }
-                    $properties = Property::find()->where(['in', 'id', $validProp])->all();
-                    //var_dump($data);
-                    $value = [];
-                    foreach ($properties as $property) {
-                        $value[] = [$property->id, $model->id, $property->group_id];
-                    }
-                    \Yii::$app->db->createCommand()->batchInsert('property_product', ['property_id', 'product_id', 'group_id'], $value)->execute();
-                    if ($model->imageFile !== null) {
-                        if ($model->image = $model->upload()) {
-                            if ($model->save()){
-                                $this->redirect(Url::toRoute('product/index'));
-                            }
-                        } 
-                    } else {
-                        $this->redirect(Url::toRoute('product/index'));
-                    }
+            $product->imageFile = UploadedFile::getInstance($form, 'image');
+            $product->name = $form->name;
+            $product->price = $form->price;
+            if ($product->save()) {
+                $validProp = array_map('intval', $data['CreateProductForm']['properties']);
+                $properties = Property::find()->where(['in', 'id', $validProp])->all();
+                $value = [];
+                foreach ($properties as $property) {
+                    $value[] = [$property->id, $product->id, $property->group_id];
                 }
-        } else {
-            return $this->render('create', [
-                'model' => $form,
-                'groups' => $groups,
-            ]);
+                \Yii::$app->db->createCommand()->batchInsert('property_product', ['property_id', 'product_id', 'group_id'], $value)->execute();
+                if ($product->imageFile !== null) {
+                    if ($product->image = $product->upload()) {
+                        if ($product->save()){
+                            $session->setFlash('success', 'Товар "' . $product->name. '" успешно добавлен!');
+                            return $this->redirect(Url::toRoute('product/index'));
+                        }
+                        $session->setFlash('error', 'Продукт "' . $product->name . '" не удалось создать! Произошла ошибка при загрузе изображения.');
+                        return $this->redirect(Url::toRoute('product/index'));
+                    } 
+                }
+                $session->setFlash('success', 'Товар "' . $product->name. '" успешно добавлен!');
+                return $this->redirect(Url::toRoute('product/index'));
+            }
+            $session->setFlash('error', 'Продукт "' . $product->name . '" не удалось создать!');
+            return $this->redirect(Url::toRoute('product/index'));
         }
+        return $this->render('create', [
+            'model' => $form,
+            'groups' => $groups,
+        ]);
     }
 
     public function actionUpdate($id)
     {
-        $model = new UpdateProductForm();
-        $product = Product::find()->with('properties')->where(['id' => $id])->one();
+        $session = \Yii::$app->session;
+        $data = \Yii::$app->request->post();
         $groups = GroupProperty::find()->with('properties')->all();
+        $product = Product::find()->with('properties')->where(['id' => $id])->one();
+        $model = new UpdateProductForm();
+        $model->afterFind($product);
         $product->imageFile = UploadedFile::getInstance($model, 'image');
 
         $propertiesSelected = [];
@@ -108,30 +108,37 @@ class ProductController extends \yii\web\Controller
             $propertiesSelected[$property->id] = ['selected' => true];
         }
 
-        $data = \Yii::$app->request->post();
         if($model->load($data) && $model->validate()) {
             $product->name = $model->name;
             $product->price = $model->price;
             PropertyProduct::deleteAll(['product_id' => $product->id]);
 
+            $validProp = array_map('intval', $data['UpdateProductForm']['properties']);
+            $properties = Property::find()->where(['in', 'id', $validProp])->all();
             $value = [];
-            foreach ($data['UpdateProductForm']['properties'] as $property) {
-                $value[] = [$property, $product->id];
+            foreach ($properties as $property) {
+                $value[] = [$property->id, $product->id, $property->group_id];
             }
-            \Yii::$app->db->createCommand()->batchInsert('property_product', ['property_id', 'product_id'], $value)->execute();
-            if ($product->imageFile !== null) {
-                $product->update();
-                if ($product->image !== null) {
-                    FileHelper::unlink(Product::IMAGE_PATH . $id . '/' . $product->image);
+            $propertyUpdate = Yii::$app->db->createCommand()->batchInsert('property_product', ['property_id', 'product_id', 'group_id'], $value)->execute();
+            if ($product->update() || $propertyUpdate) {
+                if ($product->imageFile !== null) {
+                    if ($product->image !== null) {
+                        FileHelper::unlink(Product::IMAGE_PATH . $id . '/' . $product->image);
+                    }
+                    if ($product->image = $product->upload()) {
+                        if( $product->save()) {
+                            $session->setFlash('success', 'Продукт "' . $product->name . '" успешно обновлен!');
+                            return $this->redirect(Url::toRoute('product/index'));
+                        } 
+                        $session->setFlash('error', 'Продукт "' . $product->name . '" не удалось обновить! Произошла ошибка при загрузе изображения.');
+                        return $this->redirect(Url::toRoute('product/index'));
+                    }
                 }
-                if ($product->image = $product->upload()) {
-                    $product->save();
-                    return $this->redirect(Url::toRoute('product/index'));
-                }
-            } else {
-                $product->update();
+                $session->setFlash('success', 'Продукт "' . $product->name . '" успешно обновлен!');
                 return $this->redirect(Url::toRoute('product/index'));
             }
+            $session->setFlash('error', 'Продукт "' . $product->name . '" не удалось обновить!');
+            return $this->redirect(Url::toRoute('product/index'));
         }
 
         return $this->render('update', [
@@ -144,10 +151,12 @@ class ProductController extends \yii\web\Controller
 
     public function actionDelete($id)
     {
+        $session = \Yii::$app->session;
         FileHelper::removeDirectory(Product::IMAGE_PATH . $id);
-        $model = Product::findOne($id);
-        $model->delete();
-
-        $this->redirect(Url::toRoute('admin/index'));
+        $product = Product::findOne($id);
+        $product->delete() ? 
+        $session->setFlash('success', 'Продукт "' . $product->name . '" успешно удален!') :
+        $session->setFlash('error', 'Продукт "' . $product->name . '" не удалось удалить!');
+        return $this->redirect(Url::toRoute('admin/index'));
     }
 }
