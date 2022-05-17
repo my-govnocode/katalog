@@ -78,6 +78,7 @@ class ProductController extends \yii\web\Controller
                         $value[] = [$property->id, $model->id, $property->group_id];
                     }
                     \Yii::$app->db->createCommand()->batchInsert('property_product', ['property_id', 'product_id', 'group_id'], $value)->execute();
+
                     if ($model->imageFile !== null) {
                         if ($model->image = $model->upload()) {
                             if ($model->save()){

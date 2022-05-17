@@ -82,7 +82,6 @@ use yii\helpers\Html;
 
                         <div class="element-price"><?= Html::encode($product->price); ?> ₽</div><br>
 
-
                         <?= Html::beginForm(['product/update', 'id' => $product->id], 'PATCH'); ?>
                             <?= Html::submitButton('Обновить', ['class' => 'btn']); ?>
                         <?= Html::endForm(); ?><br>
