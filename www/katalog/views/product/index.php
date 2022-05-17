@@ -6,51 +6,9 @@ use yii\widgets\Pjax;
 
 ?>
 
-<script>
-var $form = $('#productFilter');
-$form.on('beforeSubmit', function() {
-    var data = $form.serialize();
-    $.ajax({
-        url: $form.attr('action'),
-        type: 'GET',
-        data: data,
-        success: function (data) {
-            // Implement successful
-        },
-        error: function(jqXHR, errMsg) {
-            alert(errMsg);
-        }
-     });
-     return false; // prevent default submit
-});
-
-
-checkboxes = Array.from(document.querySelectorAll('.productFilter'));
-checkboxes.forEach(function(checkbox, i) {
-
-    checkbox.onchange = function() {
-
-        $.ajax({
-            url: $form.attr('action'),
-            type: 'GET',
-            data: {
-                settings: this.name,
-                id: this.value,
-                checked: this.checked ? 1:0
-            },
-            beforeSend: function() { checkbox.disabled = true; },
-            complete: function() { checkbox.disabled = false; },
-            success: function(response) {
-                alert("dlfdkfmdk")
-            }
-        });
-    }
-});
-</script> 
-<?php Pjax::begin(); ?>
 <div class="columns">
     <div class="column col-3">
-    <form id="productFilter" action="<?= Url::toRoute('product/index'); ?>" method='get'>
+    <form id="productFilter" action="<?= Url::toRoute('product/index'); ?>" data-pjax="true" method='get'>
         <!-- filter -->
         <div class="filter">
                 <?php foreach($groups as $group): ?>
@@ -127,4 +85,3 @@ checkboxes.forEach(function(checkbox, i) {
         </div>
     </div>
 </div>
-<?php Pjax::end(); ?>
