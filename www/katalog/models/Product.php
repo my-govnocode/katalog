@@ -15,6 +15,8 @@ use yii\helpers\FileHelper;
 class Product extends \yii\db\ActiveRecord
 {
     const IMAGE_PATH = 'image/products/';
+    const PRICE_MIN = 1;
+    const PRICE_MAX = 2000;
 
     public $imageFile;
 
