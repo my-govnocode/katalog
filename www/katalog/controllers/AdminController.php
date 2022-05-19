@@ -8,7 +8,6 @@ use yii\helpers\ArrayHelper;
 use app\models\Property;
 use Yii;
 
-
 class AdminController extends \yii\web\Controller
 {
     public $layout = 'main';
@@ -20,7 +19,7 @@ class AdminController extends \yii\web\Controller
         $products = Product::find();
         $data = Yii::$app->request->get();
 
-        if($data) {
+        if(Yii::$app->request->isAjax) {
             $priceFrom = ArrayHelper::remove($data, 'priceFrom');
             $priceTo = ArrayHelper::remove($data, 'priceTo');
             $products->andWhere(['between', 'price', $priceFrom, $priceTo]);
@@ -36,12 +35,10 @@ class AdminController extends \yii\web\Controller
 
             $products = $products->groupBy('products.id')->all();
 
-            return $this->render('index', [
+            return $this->renderAjax('products', [
                 'products' => $products,
-                'session' => $session,
-                'groups' => $groups
             ]);
-        } 
+        }
         $products = $products->all();
         return $this->render('index', [
             'products' => $products,

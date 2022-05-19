@@ -1,15 +1,13 @@
 <?php
-
 use app\models\Product;
-use yii\helpers\Url;
 use yii\helpers\Html;
 ?>
 
-<?php $this->registerJsFile('js/filterProducts.js', ['position'=>\yii\web\View::POS_END]); ?>
+<?php $this->registerJsFile(Yii::$app->urlManager->createUrl('js/filterProducts.js'), ['position'=>\yii\web\View::POS_END]); ?>
 
 <div class="columns">
     <div class="column col-3">
-    <form id="form" action="<?= Url::toRoute('product/index') ?>" method='get'>
+    <form id="form" action="<?= Yii::$app->urlManager->createUrl($url); ?>" method='get'>
         <!-- filter -->
         <div class="filter">
                 <?php foreach($groups as $group): ?>
@@ -65,7 +63,7 @@ use yii\helpers\Html;
                 <!-- filter-item -->
                 <div class="filter-item">
                     <div class="filter-content">
-                        <a id="clearFilter" href="<?= Url::toRoute('product/index'); ?>" class="btn">Сбросить фильтр</a>
+                        <a id="clearFilter" href="<?= $url; ?>" class="btn">Сбросить фильтр</a>
                         <button style="display: none" id="submit" class="btn">Найти</button>
                     </div>
                 </div>
