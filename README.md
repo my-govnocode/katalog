@@ -4,7 +4,7 @@
 
 1) Загрузить код
 ```
-git clone https://github.com/my-govnocode/katalog.git)
+git clone https://github.com/my-govnocode/katalog.git
 ```
 2) Собрать docker контейнеры
 ```
