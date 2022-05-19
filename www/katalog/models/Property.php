@@ -45,15 +45,4 @@ class Property extends \yii\db\ActiveRecord
             'group_id' => 'Group ID',
         ];
     }
-
-    public function getGroup()
-    {
-        return $this->hasOne(GroupProperty::class, ['id' => 'group_id']);
-    }
-
-    public function getProducts()
-    {
-        return $this->hasMany(Product::class, ['id' => 'product_id'])
-            ->viaTable('property_product', ['property_id' => 'id']);
-    }
 }

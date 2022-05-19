@@ -16,12 +16,12 @@ use yii\widgets\ActiveForm;
             ]); ?>
 
                 <div class="form-group">
-                    <?= $form->field($model, 'name')->textInput()->label('Название'); ?>
+                    <?= $form->field($model, 'name', ['errorOptions' => ['class' => 'text-danger']])->textInput()->label('Название'); ?>
                 </div>
                 <br>
 
                 <div class="form-group">
-                    <?= $form->field($model, 'price')->label('Цена'); ?>
+                    <?= $form->field($model, 'price', ['errorOptions' => ['class' => 'text-danger']])->label('Цена'); ?>
                 </div>
                 <br>
 
