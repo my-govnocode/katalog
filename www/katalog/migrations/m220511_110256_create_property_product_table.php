@@ -45,6 +45,15 @@ class m220511_110256_create_property_product_table extends Migration
             'id',
             'CASCADE'
         );
+
+        $this->addForeignKey(
+            'fk-property_product-group_id',
+            'property_product',
+            'group_id',
+            'group_properties',
+            'id',
+            'CASCADE'
+        );
     }
 
     /**
@@ -52,6 +61,26 @@ class m220511_110256_create_property_product_table extends Migration
      */
     public function safeDown()
     {
+        $this->dropIndex(
+            'idx-property_product-property_id',
+            'property_product',
+        );
+
+        $this->dropForeignKey(
+            'fk-property_product-property_id',
+            'property_product',
+        );
+
+        $this->dropForeignKey(
+            'fk-property_product-product_id',
+            'property_product',
+        );
+
+        $this->dropForeignKey(
+            'fk-property_product-group_id',
+            'property_product',
+        );
+
         $this->dropTable('{{%property_product}}');
     }
 }

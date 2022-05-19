@@ -16,7 +16,7 @@ class m220511_100737_create_products_table extends Migration
             'id' => $this->primaryKey(),
             'name' => $this->string()->notNull()->unique(),
             'image' => $this->string(),
-            'price' => $this->decimal()->notNull(),
+            'price' => $this->decimal(6,2)->notNull(),
         ]);
     }
 

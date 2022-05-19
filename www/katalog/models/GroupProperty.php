@@ -15,7 +15,7 @@ class GroupProperty extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 'group_propertys';
+        return 'group_properties';
     }
 
     /**
