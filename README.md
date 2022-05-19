@@ -4,7 +4,7 @@
 
 1) Загрузить код
 ```
-git clone https://github.com/my-govnocode/Docker.git
+git clone https://github.com/my-govnocode/katalog.git)
 ```
 2) Собрать docker контейнеры
 ```
@@ -30,45 +30,3 @@ docker-compose up -d
 Что бы подключится к вашему mysql, например через Workbench в настроках подключения:
     host: 127.0.0.100
     port: 3305
-
-## Структура проекта 
-```
-Docker:
-    > images
-        > php
-            - Dockerfile
-            - php.ini
-            
-    > logs
-        - access.log
-        - error.log
-        
-    > mysql
-    
-    > nginx
-        > conf.d
-            - project-name.conf
-            
-    > www
-        > project-name
-        
-    - docker-compose.yml
-```
-## Laravel
-**если вы работаете с проектом на laravel и хотите сделать миграцию:**
-1) Узнайть имя запущеных контейнеров
-```
-docker container ls -a
-```
-2) Запустить сессию терминала для контейнера в интерактивном режиме
-```
-docker exec -it имя_php_контейнера bin/sh
-```
-3) Перейти в папку с проектом
-```
-cd /var/www/имя_проета
-```
-4) Сделать миграцию
-```
-php artisan migrate:fresh --seed
-```
