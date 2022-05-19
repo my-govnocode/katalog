@@ -4,7 +4,6 @@ use yii\helpers\Html;
 ?>
 
 <?php $this->registerJsFile(Yii::$app->urlManager->createUrl('js/filterProducts.js'), ['position'=>\yii\web\View::POS_END]); ?>
-
 <div class="columns">
     <div class="column col-3">
     <form id="form" action="<?= Yii::$app->urlManager->createUrl($url); ?>" method='get'>
@@ -35,29 +34,6 @@ use yii\helpers\Html;
                             <span class="price-sep"></span>
                             <input type="number" name="priceTo" class="price-input ui-slider-max" value="<?= Product::PRICE_MAX; ?>">
                         </div>
-                       
-                        <!-- <div class="ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content">
-                            <div class="ui-slider-range ui-corner-all ui-widget-header" style="left: 0%; width: 100%;"></div>
-                            <span tabindex="0" class="ui-slider-handle ui-corner-all ui-state-default" style="left: 0%;"></span>
-                            <span tabindex="0" class="ui-slider-handle ui-corner-all ui-state-default" style="left: 100%;"></span>
-                        </div>
-                        <script>
-                            $('document').ready(function () {
-                                $('.ui-slider').slider({
-                                    animate: false,
-                                    range: true,
-                                    values: [1, 2000],
-                                    min: 1,
-                                    max: 2000,
-                                    step: 1,
-                                    slide: function (event, ui) {
-                                        if (ui.values[1] - ui.values[0] < 1) return false;
-                                        $('.ui-slider-min').val(ui.values[0]);
-                                        $('.ui-slider-max').val(ui.values[1]);
-                                    }
-                                });
-                            });
-                        </script> -->
                     </div>
                 </div>
                 <!-- filter-item -->
