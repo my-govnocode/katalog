@@ -4,6 +4,7 @@ use yii\helpers\Url;
 ?>
 
 <?= Categories::widget(['url' => Url::toRoute('product/index')]); ?>
+
     <div class="column col-9">
     <?php if($session->hasFlash('success')): ?>
                 <div class="alert alert-success" role="alert">

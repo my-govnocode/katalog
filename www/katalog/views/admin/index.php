@@ -1,5 +1,4 @@
 <?php
-
 use app\widgets\Categories;
 use yii\helpers\Html;
 use yii\helpers\Url;
