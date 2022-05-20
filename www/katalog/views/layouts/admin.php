@@ -22,13 +22,12 @@ AppAsset::register($this);
 </head>
 <body class="d-flex flex-column h-100">
 <?php $this->beginBody() ?>
-<div class="wrapper">
-    <div class="header">
+<div class="wraper">
+<div class="header bg-black text-white" style="border-bottom: black;">
         <div class="container d-flex justify-content-between">
-        	<h3><a href="<?= Url::toRoute('product/index') ?>">Каталог</a></h3>
-                <?php if(\Yii::$app->user->identity){ ?>
+        	<h3><a class="text-white" href="<?= Url::toRoute('product/index') ?>">Каталог</a></h3>
                     <div class="dropdown">
-                        <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
                             <img src="https://github.com/mdo.png" alt="" width="32" height="32" class="rounded-circle me-2">
                             <strong><?= \Yii::$app->user->identity->username; ?></strong>
                         </a>
@@ -40,24 +39,48 @@ AppAsset::register($this);
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="<?= Url::toRoute('auth/logout'); ?>">Выйти</a></li>
                         </ul>
-                    </div>
-                    <?php }else{ ?>
-                        <div class="login col-md-3">
-                            <div class="row">
-                                <h3 class="col-md-6"><a href="<?= Url::to('login') ?>">Войти</a></h3>
-                                <h3 class="col-md-6"><a href="<?= Url::to('register') ?>">Регистрация</a></h3>
-                            </div>
                         </div>
-                    <?php } ?>
+                    </div>
         </div>
     </div>
-    <div class="wrap">
+
+<div class="row  d-flex">
+<div class="d-flex justify-content-center col-md-2 flex-column p-3 text-white bg-dark">
+    <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+      <span class="fs-4">Админка</span>
+    </a>
+    <hr>
+    <ul class="nav nav-pills flex-column mb-auto">
+      <li>
+        <a href="#" class="nav-link text-white">
+          Главная
+        </a>
+      </li>
+      <li>
+        <a href="#" class="nav-link text-white">
+          Продукты
+        </a>
+      </li>
+      <li>
+        <a href="#" class="nav-link text-white">
+          Пользователи
+        </a>
+      </li>
+    </ul>
+  </div>
+
+
+    <div class="wrap col-md-9">
         <div class="container">
+            
 
             <?= $content ?>
 
         </div>
     </div>
+    </div>
+    </div>
+</div>
 </div>
 <?php $this->endBody() ?>
 </body>

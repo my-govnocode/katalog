@@ -1,8 +1,6 @@
 <?php
 use app\widgets\Categories;
 use yii\helpers\Url;
-use yii\widgets\ActiveForm;
-
 ?>
 
 <?= Categories::widget(['url' => Url::toRoute('product/index')]); ?>

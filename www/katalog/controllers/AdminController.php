@@ -12,7 +12,7 @@ use Yii;
 
 class AdminController extends \yii\web\Controller
 {
-    public $layout = 'main';
+    public $layout = 'admin';
 
     public function behaviors()
     {
@@ -66,6 +66,14 @@ class AdminController extends \yii\web\Controller
             'products' => $products,
             'session' => $session,
             'groups' => $groups
+        ]);
+    }
+
+    public function actionUsers()
+    {
+        $users = User::find()->all();
+        return $this->render('users', [
+            'users' => $users,
         ]);
     }
 }

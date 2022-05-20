@@ -55,6 +55,7 @@ $config = [
                 'login' => 'auth/login',
                 'register' => 'auth/register',
                 'logout' => 'auth/logout',
+                'admin/users' => 'admin/users',
                 'GET admin/catalog' => 'admin/index',
                 'GET catalog' => 'product/index',
                 'GET catalog/create' => 'product/create',

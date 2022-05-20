@@ -1,6 +1,7 @@
 <?php
 use yii\helpers\Html;
 ?>
+
 <?php foreach($products as $product):?>
     <!--  -->
     <div class="column col-4">
