@@ -6,11 +6,33 @@ use app\models\GroupProperty;
 use app\models\Product;
 use yii\helpers\ArrayHelper;
 use app\models\Property;
+use app\models\User;
+use yii\filters\AccessControl;
 use Yii;
 
 class AdminController extends \yii\web\Controller
 {
     public $layout = 'main';
+
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::class,
+                'only' => ['index'],
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['index'],
+                        'matchCallback' => function($rule, $action) {
+                            return Yii::$app->user->identity->role === User::ROLE_ADMIN;
+                        },
+                    ],
+
+                ],
+            ],
+        ];
+    }
 
     public function actionIndex()
     {

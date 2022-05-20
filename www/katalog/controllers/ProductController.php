@@ -12,11 +12,33 @@ use app\models\UpdateProductForm;
 use yii\helpers\ArrayHelper;
 use yii\web\UploadedFile;
 use yii\helpers\FileHelper;
+use app\models\User;
+use yii\filters\AccessControl;
 use Yii;
 
 class ProductController extends \yii\web\Controller
 {
     public $layout = 'main';
+
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::class,
+                'only' => ['create', 'update', 'delete'],
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['create', 'update', 'delete'],
+                        'matchCallback' => function($rule, $action) {
+                            return Yii::$app->user->identity && Yii::$app->user->identity->role === User::ROLE_ADMIN;
+                        },
+                    ],
+
+                ],
+            ],
+        ];
+    }
 
     public function actionIndex()
     {
@@ -25,9 +47,11 @@ class ProductController extends \yii\web\Controller
         $data = \Yii::$app->request->get();
 
         if(Yii::$app->request->isAjax) {
-            $priceFrom = ArrayHelper::remove($data, 'priceFrom');
-            $priceTo = ArrayHelper::remove($data, 'priceTo');
-            $products->andWhere(['between', 'price', $priceFrom, $priceTo]);
+                $priceFrom = isset($data['priceFrom']) ? ArrayHelper::remove($data, 'priceFrom') : Product::PRICE_MIN;
+                $priceTo = isset($data['priceTo']) ? ArrayHelper::remove($data, 'priceTo') : Product::PRICE_MAX;
+                $search = isset($data['search']) ? ArrayHelper::remove($data, 'search') : '';
+
+                $products->andWhere(['between', 'price', $priceFrom, $priceTo])->andWhere(['like', 'name', $search]);
 
             foreach ($data as $key => $prop) {
                 $propId = Property::find()->select('id')->where(['code' => $prop])->asArray()->all();

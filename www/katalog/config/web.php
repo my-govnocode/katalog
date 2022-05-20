@@ -22,6 +22,7 @@ $config = [
         'user' => [
             'identityClass' => 'app\models\User',
             'enableAutoLogin' => true,
+            'loginUrl' => '/login',
         ],
         'errorHandler' => [
             'errorAction' => 'site/error',
@@ -32,6 +33,9 @@ $config = [
             // 'useFileTransport' to false and configure transport
             // for the mailer to send real emails.
             'useFileTransport' => true,
+        ],
+        'authManager' => [
+            'class' => 'yii\rbac\DbManager',
         ],
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
@@ -48,6 +52,9 @@ $config = [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                'login' => 'auth/login',
+                'register' => 'auth/register',
+                'logout' => 'auth/logout',
                 'GET admin/catalog' => 'admin/index',
                 'GET catalog' => 'product/index',
                 'GET catalog/create' => 'product/create',
