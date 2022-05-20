@@ -60,16 +60,18 @@ class SeedController extends \yii\console\Controller
                 if ($productsCreate != 0) {
 
                 $productsFirst10 = Product::find()->orderBy(['id' => SORT_ASC])->limit(10)->all();
-                $properties = [$propertyBig, $propertySmall, $propertyBad, $propertyGood];
+                $properties = [[$propertyBig, $propertySmall], [$propertyBad, $propertyGood]];
                 $arr = [];
 
                 foreach ($productsFirst10 as $product) {
-                    $property = $properties[rand(0, count($properties)-1)];
-                    $arr[] = [
-                        $property->id,
-                        $product->id,
-                        $property->group_id
-                    ];
+                    for ($i=0;$i<2;$i++) {
+                        $property = $properties[$i][rand(0, 1)];
+                        $arr[] = [
+                            $property->id,
+                            $product->id,
+                            $property->group_id
+                        ];
+                    }
                 }
 
                 $PropertyProduct = Yii::$app->db->createCommand()->batchInsert('property_product', ['property_id', 'product_id', 'group_id'], $arr)->execute();
