@@ -30,3 +30,20 @@ composer install
     'password' => 'root',
     'charset' => 'utf8',
 ```
+
+Для заполнения бд.
+
+file config/db.php
+```
+    'class' => 'yii\db\Connection',
+    'dsn' => 'mysql:host=127.0.0.1;dbname=katalog',
+    'username' => 'root',
+    'password' => 'root',
+    'charset' => 'utf8',
+```
+
+```
+php yii migrate/fresh
+
+php yii seed
+```
