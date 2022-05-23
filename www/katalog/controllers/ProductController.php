@@ -4,11 +4,10 @@ namespace app\controllers;
 
 use app\models\GroupProperty;
 use app\models\Product;
-use app\models\CreateProductForm;
+use app\models\ProductForm;
 use app\models\Property;
 use yii\helpers\Url;
 use app\models\PropertyProduct;
-use app\models\UpdateProductForm;
 use yii\helpers\ArrayHelper;
 use yii\web\UploadedFile;
 use yii\helpers\FileHelper;
@@ -25,20 +24,8 @@ class ProductController extends \yii\web\Controller
         $data = \Yii::$app->request->get();
 
         if(Yii::$app->request->isAjax) {
-            $priceFrom = ArrayHelper::remove($data, 'priceFrom');
-            $priceTo = ArrayHelper::remove($data, 'priceTo');
-            $products->andWhere(['between', 'price', $priceFrom, $priceTo]);
-
-            foreach ($data as $key => $prop) {
-                $propId = Property::find()->select('id')->where(['code' => $prop])->asArray()->all();
-                $arrPropId = [];
-                array_walk_recursive($propId, function($v) use (&$arrPropId){
-                    $arrPropId[] = $v;
-                });
-                $products->innerJoin('property_product p' . $key, 'p' . $key . '.product_id = products.id')->andWhere(['in', 'p' . $key . '.property_id', $arrPropId]);
-            }
-
-            $products = $products->groupBy('products.id')->all();
+            $product = new Product();
+            $products = $product->filteringByPropertiesAndPrice($data);
 
             return $this->renderAjax('products', [
                 'products' => $products,
@@ -56,7 +43,7 @@ class ProductController extends \yii\web\Controller
         $session = \Yii::$app->session;
         $groups = GroupProperty::find()->with('properties')->all();
         $product = new Product();
-        $form = new CreateProductForm();
+        $form = new ProductForm(['scenario' => ProductForm::SCENARIO_CREATE_PRODUCT]);
         $data = \Yii::$app->request->post();
 
         if ($form->load($data) && $form->validate()) {
@@ -64,13 +51,7 @@ class ProductController extends \yii\web\Controller
             $product->name = $form->name;
             $product->price = $form->price;
             if ($product->save()) {
-                $validProp = array_map('intval', $data['CreateProductForm']['properties']);
-                $properties = Property::find()->where(['in', 'id', $validProp])->all();
-                $value = [];
-                foreach ($properties as $property) {
-                    $value[] = [$property->id, $product->id, $property->group_id];
-                }
-                \Yii::$app->db->createCommand()->batchInsert('property_product', ['property_id', 'product_id', 'group_id'], $value)->execute();
+                $form->propertiesBinding($data, $product);
                 if ($product->imageFile !== null) {
                     if ($product->image = $product->upload()) {
                         if ($product->save()){
@@ -99,7 +80,7 @@ class ProductController extends \yii\web\Controller
         $data = \Yii::$app->request->post();
         $groups = GroupProperty::find()->with('properties')->all();
         $product = Product::find()->with('properties')->where(['id' => $id])->one();
-        $model = new UpdateProductForm();
+        $model = new ProductForm(['scenario' => ProductForm::SCENARIO_UPDATE_PRODUCT]);
         $model->afterFind($product);
         $product->imageFile = UploadedFile::getInstance($model, 'image');
 
@@ -112,14 +93,7 @@ class ProductController extends \yii\web\Controller
             $product->name = $model->name;
             $product->price = $model->price;
             PropertyProduct::deleteAll(['product_id' => $product->id]);
-
-            $validProp = array_map('intval', $data['UpdateProductForm']['properties']);
-            $properties = Property::find()->where(['in', 'id', $validProp])->all();
-            $value = [];
-            foreach ($properties as $property) {
-                $value[] = [$property->id, $product->id, $property->group_id];
-            }
-            $propertyUpdate = Yii::$app->db->createCommand()->batchInsert('property_product', ['property_id', 'product_id', 'group_id'], $value)->execute();
+            $propertyUpdate = $model->propertiesBinding($data, $product);
             if ($product->update() || $propertyUpdate) {
                 if ($product->imageFile !== null) {
                     if ($product->image !== null) {
