@@ -3,6 +3,8 @@
 namespace app\models;
 
 use yii\helpers\FileHelper;
+use yii\helpers\ArrayHelper;
+use Yii;
 
 /**
  * This is the model class for table "products".
@@ -72,5 +74,31 @@ class Product extends \yii\db\ActiveRecord
     {
         return $this->hasMany(GroupProperty::class, ['id' => 'group_id'])
             ->via('properties');
+    }
+
+    public function filteringByPropertiesAndPrice($data)
+    {
+        $products = Product::find();
+        $priceFrom = ArrayHelper::remove($data, 'priceFrom');
+        $priceTo = ArrayHelper::remove($data, 'priceTo');
+        $products->andWhere(['between', 'price', $priceFrom, $priceTo]);
+
+        $properties = Property::find()->select(['id', 'code'])->asArray()->all();
+        foreach ($data as $key => $prop) {
+            $propId = [];
+            foreach ($properties as $element) {
+                if (in_array($element['code'], $prop)) {
+                    $propId[] = $element['id'];
+                }
+            }
+
+            $arrPropId = [];
+            array_walk_recursive($propId, function($v) use (&$arrPropId){
+                $arrPropId[] = $v;
+            });
+            $products->innerJoin('property_product p' . $key, 'p' . $key . '.product_id = products.id')->andWhere(['in', 'p' . $key . '.property_id', $arrPropId]);
+        }
+
+        return $products->groupBy('products.id')->all();
     }
 }
